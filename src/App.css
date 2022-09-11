@@ -1,24 +1,8 @@
 .App {
   text-align: center;
-  background-color: #5d3fd3;
-}
-div {
-  padding: 5%;
 }
 
-.Child {
-  background-color: #8267be;
-}
-
-.Grandchild {
-  background-color: #937dc2;
-}
-
-.Grandgrandchild {
-  background-color: #bfa2db;
-}
-
-.Grandgrandgrandchild {
-  background-color: #f0d9ff;
-  color: #686868;
-}
+/* input[type='file'] {
+  position: relative;
+  z-index: 1;
+} */
