@@ -10,10 +10,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import orca from "./components/orca.svg";
 import { useAuthContext, AuthContextProvider } from "./context/AuthContext";
 import {
+  getUserContext,
   register,
   saveToLocalStorage,
   getFromLocalStorage,
-} from "./utils/authUtils";
+} from "./utils/auth";
 
 function App() {
   const { user } = useAuthContext();
@@ -30,7 +31,7 @@ function App() {
           path="secret"
           element={
             <ProtectedRoute>
-              <div>Hello, welcome back {user.username}</div>
+              <div>Hello, welcome back {user?.username}</div>
             </ProtectedRoute>
           }
         />

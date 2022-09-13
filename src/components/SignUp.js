@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { register, saveToLocalStorage } from "../utils/authUtils";
+import { register, saveToLocalStorage } from "../utils/auth";
 import { useAuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
@@ -10,16 +10,30 @@ const SignUp = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const { headers } = await register(user);
 
-    setAuthToken(headers["x-authorization-token"]);
-    saveToLocalStorage(headers["x-authorization-token"]);
-    navigate("/secret", { replace: true });
+    const formData = new FormData();
+
+    const { username, password, profile_pic, email } = user;
+    formData.append("profile_pic", profile_pic);
+    formData.append("username", username);
+    formData.append("password", password);
+    formData.append("email", email);
+
+    const { headers, user: registereduser } = await register(formData);
+    const token = headers["x-authorization-token"];
+    setAuthToken(token);
+    saveToLocalStorage(token);
+    // navigate("/secret", { replace: true });
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleUploadPic = (e) => {
+    const uploadedPicture = e.target.files[0];
+    setUser((prev) => ({ ...prev, [e.target.name]: uploadedPicture }));
   };
 
   return (
@@ -28,14 +42,23 @@ const SignUp = () => {
         <div className="bg-white px-6 py-8 rounded shadow-md text-black w-full">
           <h1 className="mb-8 text-3xl text-center">Sign up</h1>
 
-          <div className="mx-auto w-64 text-center ">
+          <div className="mx-auto w-64 text-center">
             <div className="relative w-64">
-              <div className="w-64 h-64 group bg-blue-100 hover:bg-blue-200 opacity-60 rounded-full flex justify-center items-center cursor-pointer transition duration-500">
-                <img
-                  className="w-12"
-                  src="https://www.svgrepo.com/show/33565/upload.svg"
-                  alt=""
+              <div className="w-64 h-64 group bg-blue-100 hover:bg-blue-200 opacity-60 rounded-full  flex justify-center items-center  transition duration-500">
+                <input
+                  name="profile_pic"
+                  type="file"
+                  id="file"
+                  style={{ display: "none" }}
+                  onChange={handleUploadPic}
                 />
+                <label htmlFor="file">
+                  <img
+                    className="w-12 cursor-pointer "
+                    src="https://www.svgrepo.com/show/33565/upload.svg"
+                    alt="upload"
+                  />
+                </label>
               </div>
             </div>
           </div>
