@@ -45,20 +45,11 @@ const getUserContext = async (token) => {
 
     return data;
   } catch (err) {
+    removeFromLocalStorage();
     console.log(err);
   }
 };
 
-const validateToken = async (token) => {
-  try {
-    const { username } = await getUserContext(token);
-    // setUser({ username });
-    // setAuthToken(token);
-  } catch (err) {
-    removeFromLocalStorage();
-    // setAuthToken(null);
-  }
-};
 const saveToLocalStorage = (token) => {
   localStorage.setItem("token", token);
 };
@@ -76,7 +67,6 @@ export {
   register,
   login,
   getUserContext,
-  validateToken,
   getFromLocalStorage,
   saveToLocalStorage,
   removeFromLocalStorage,

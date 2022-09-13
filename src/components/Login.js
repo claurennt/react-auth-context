@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, saveToLocalStorage, validateToken } from "../utils/auth";
+import { login, saveToLocalStorage, getUserContext } from "../utils/auth";
 import { useAuthContext } from "../context/AuthContext";
 const Login = () => {
   const { user, setUser, setAuthToken } = useAuthContext();
-
+  const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -14,15 +14,26 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { headers } = await login(user);
+    try {
+      const { username, password } = user;
 
-    const token = headers["x-authorization-token"];
-    if (token) {
-      const data = await validateToken(token);
-      setUser(data);
-      setAuthToken(token);
-      saveToLocalStorage(token);
-      navigate("/");
+      const { headers } = await login({ username, password });
+
+      const token = headers["x-authorization-token"];
+
+      if (token) {
+        const userContext = await getUserContext(token);
+
+        setUser(userContext);
+        setAuthToken(token);
+        saveToLocalStorage(token);
+        navigate("/");
+      }
+    } catch (err) {
+      console.log(err);
+      setUser({ username: "", password: "", email: "" });
+      setIsError(true);
+      setAuthToken(null);
     }
   };
 
@@ -35,7 +46,9 @@ const Login = () => {
             <input
               onChange={handleChange}
               type="text"
-              className="block border border-grey-light w-full p-3 rounded mb-4"
+              className={`block border ${
+                isError ? "border-rose-600" : "border-grey-light"
+              } w-full p-3 rounded mb-4`}
               name="username"
               placeholder="Username"
               value={user.username}
@@ -44,11 +57,18 @@ const Login = () => {
             <input
               onChange={handleChange}
               type="password"
-              className="block border border-grey-light w-full p-3 rounded mb-4"
+              className={`block border  ${
+                isError ? "border-rose-600" : "border-grey-light"
+              } w-full p-3 rounded mb-4`}
               name="password"
               placeholder="Password"
               value={user.password}
             />
+            {isError && !user.password && !user.username && (
+              <span className="text-rose-600">
+                Invalid credentials - please double check username/password
+              </span>
+            )}
 
             <button
               type="submit"

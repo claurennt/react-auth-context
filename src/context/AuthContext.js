@@ -3,8 +3,8 @@ import { createContext, useState, useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import {
   getFromLocalStorage,
-  validateToken,
   getUserContext,
+  saveToLocalStorage,
   removeFromLocalStorage,
 } from "../utils/auth";
 
@@ -20,9 +20,14 @@ const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      validateToken(token).then((data) => setUser(data));
+      getUserContext(token).then((data) => {
+        setAuthToken(token);
+        saveToLocalStorage(token);
+        setUser(data);
+      });
     }
   }, []);
+
   return (
     <AuthContext.Provider
       value={{
