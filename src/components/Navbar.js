@@ -1,23 +1,15 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAuthContext } from "../context/AuthContext";
 import { removeFromLocalStorage } from "../utils/auth";
+import NavbarLink from "./Elements/NavbarLink";
 
-const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
-];
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
-const activeClassNames = "bg-gray-900 text-white";
-const inactiveClassNames = "text-gray-300 hover:bg-gray-700 hover:text-white";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -33,7 +25,7 @@ const Navbar = () => {
   };
 
   return (
-    <Disclosure as="nav" className="bg-gray-800">
+    <Disclosure as="nav" className="bg-gray-800 m-auto">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -71,43 +63,29 @@ const Navbar = () => {
                   type="button"
                   className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 ></button>
-
                 {/* Profile dropdown */}
                 <div className="flex space-x-4">
-                  {" "}
-                  {!authToken && (
-                    <NavLink
-                      to="signup"
-                      className={({ isActive }) =>
-                        isActive ? activeClassNames : inactiveClassNames
-                      }
-                    >
-                      Sign Up
-                    </NavLink>
-                  )}
-                  {authToken ? (
+                  {!authToken && <NavbarLink path="signup" text="Sign Up" />}
+
+                  {authToken && user.profile_pic ? (
                     <button onClick={handleLogout}>Logout</button>
                   ) : (
-                    <NavLink
-                      to="login"
-                      className={({ isActive }) =>
-                        isActive ? activeClassNames : inactiveClassNames
-                      }
-                    >
-                      Login
-                    </NavLink>
+                    <NavbarLink path="login" text="Login" />
                   )}
                 </div>
+
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="sr-only">Open user menu</span>
-                      {authToken && user.profile_pic && (
+                      {authToken && user.profile_pic ? (
                         <img
-                          className="h-8 w-8 rounded-full"
+                          className="h-10 w-10 rounded-full"
                           src={user.profile_pic}
                           alt=""
                         />
+                      ) : (
+                        <div class="rounded-full bg-slate-200 h-10 w-10 animate-pulse"></div>
                       )}
                     </Menu.Button>
                   </div>
@@ -120,12 +98,12 @@ const Navbar = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute h-31 right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white  py-3 shadow-lg ring-1 gap-y-4 flex flex-col ring-black ring-opacity-5 text-black focus:outline-none">
                       <Menu.Item>
-                        {({ active }) => <a href="#">Your Profile</a>}
+                        {({ active }) => <Link to="profile">Your Profile</Link>}
                       </Menu.Item>
                       <Menu.Item>
-                        {({ active }) => <a href="#">Settings</a>}
+                        {({ active }) => <Link to="settings">Settings</Link>}
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => <a href="#">Sign out</a>}
@@ -139,7 +117,7 @@ const Navbar = () => {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
-              {navigation.map((item) => (
+              {/* {navigation.map((item) => (
                 <Disclosure.Button
                   key={item.name}
                   as="a"
@@ -154,7 +132,7 @@ const Navbar = () => {
                 >
                   {item.name}
                 </Disclosure.Button>
-              ))}
+              ))} */}
             </div>
           </Disclosure.Panel>
         </>

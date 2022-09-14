@@ -5,7 +5,6 @@ import {
   getFromLocalStorage,
   getUserContext,
   saveToLocalStorage,
-  removeFromLocalStorage,
 } from "../utils/auth";
 
 const AuthContext = createContext();
@@ -15,18 +14,17 @@ const AuthContextProvider = ({ children }) => {
   const token = getFromLocalStorage();
 
   const [user, setUser] = useState({ username: "", password: "", email: "" });
-
-  const [authToken, setAuthToken] = useState(null);
+  const [authToken, setAuthToken] = useState(token);
 
   useEffect(() => {
     if (token) {
       getUserContext(token).then((data) => {
+        setUser(data);
         setAuthToken(token);
         saveToLocalStorage(token);
-        setUser(data);
       });
     }
-  }, []);
+  }, [token]);
 
   return (
     <AuthContext.Provider

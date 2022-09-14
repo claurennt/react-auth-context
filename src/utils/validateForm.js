@@ -7,7 +7,7 @@ const validateForm = (username, password, email, profile_pic) => {
   }
 
   //if the uploaded file is not of type image alert
-  if (profile_pic && !profile_pic?.type?.startsWith("image/")) {
+  if (profile_pic && !profile_pic.type?.startsWith("image/")) {
     alert("Please upload an image");
     isValid = false;
   }
@@ -15,4 +15,11 @@ const validateForm = (username, password, email, profile_pic) => {
   return isValid;
 };
 
-export default validateForm;
+//loops over user object and fill formData object for multipart/form-data
+const handleFormData = (data) => {
+  const formData = new FormData();
+  for (const key in data) formData.append(key, data[key]);
+  return formData;
+};
+
+export default { validateForm, handleFormData };

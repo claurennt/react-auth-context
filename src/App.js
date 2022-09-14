@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProfileSettings from "./components/ProfileSettings";
 import orca from "./components/orca.svg";
 import { useAuthContext, AuthContextProvider } from "./context/AuthContext";
 import {
@@ -27,11 +28,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="signup" element={<SignUp />} />
         <Route path="login" element={<Login />} />
+        <Route path="settings" element={<ProfileSettings />} />
         <Route
           path="secret"
           element={
             <ProtectedRoute>
-              <div>Hello, welcome back {user?.username}</div>
+              <div>Admin</div>
             </ProtectedRoute>
           }
         />

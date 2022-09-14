@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { register, saveToLocalStorage } from "../utils/auth";
-import validateForm from "../utils/validateForm";
+import { handleFormData, validateForm } from "../utils/validateForm";
 import { useAuthContext } from "../context/AuthContext";
 import Alert from "./Alert";
 
@@ -18,10 +18,7 @@ const SignUp = () => {
     const isValid = validateForm(...Object.values(user));
     if (!isValid) return;
 
-    const formData = new FormData();
-
-    //loops over user object and fill formData object for multipart/form-data
-    for (const key in user) formData.append(key, user[key]);
+    const formData = handleFormData(user);
 
     try {
       const { headers, user: registeredUser } = await register(formData);
