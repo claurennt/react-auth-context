@@ -14,13 +14,18 @@ function classNames(...classes) {
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, setUser, setAuthToken, authToken } = useAuthContext();
-
+  console.log(user);
   const handleLogout = (e) => {
     e.preventDefault();
     removeFromLocalStorage();
 
     setAuthToken(null);
-    setUser({ username: "", password: "", email: "" });
+    setUser({
+      username: "",
+      password: "",
+      email: "",
+      profile_pic: null,
+    });
     navigate("/", { replace: true });
   };
 
@@ -85,7 +90,7 @@ const Navbar = () => {
                           alt=""
                         />
                       ) : (
-                        <div class="rounded-full bg-slate-200 h-10 w-10 animate-pulse"></div>
+                        <div className="rounded-full bg-slate-200 h-10 w-10 animate-pulse"></div>
                       )}
                     </Menu.Button>
                   </div>

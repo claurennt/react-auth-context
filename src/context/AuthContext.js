@@ -13,13 +13,18 @@ const AuthContextProvider = ({ children }) => {
   // get token from local storage if exists
   const token = getFromLocalStorage();
 
-  const [user, setUser] = useState({ username: "", password: "", email: "" });
+  const [user, setUser] = useState({
+    username: "",
+    password: "",
+    email: "",
+    profile_pic: null,
+  });
   const [authToken, setAuthToken] = useState(token);
 
   useEffect(() => {
     if (token) {
       getUserContext(token).then((data) => {
-        setUser(data);
+        setUser((prev) => ({ ...prev, ...data }));
         setAuthToken(token);
         saveToLocalStorage(token);
       });

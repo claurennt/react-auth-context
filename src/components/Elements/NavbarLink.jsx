@@ -9,7 +9,7 @@ const NavbarLink = ({ path, text }) => {
 
   //display skeleton if user is not loaded yet
   return authToken && !user.profile_pic ? (
-    <div class="h-5 w-10 bg-slate-200 text-slate rounded col-span-1"></div>
+    <div className="h-5 w-10 bg-slate-200 text-slate rounded col-span-1"></div>
   ) : (
     <NavLink
       to={path.toLowerCase()}

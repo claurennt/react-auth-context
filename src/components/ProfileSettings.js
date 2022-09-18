@@ -1,7 +1,40 @@
-import React from "react";
-import { handleFormData, validateForm } from "../utils/validateForm";
+import React, { useState } from "react";
+import axios from "axios";
+import { handleFormData, validateForm } from "../utils/form";
+import { useAuthContext } from "../context/AuthContext";
+
 const ProfileSettings = () => {
-  const handleProfileChange = () => {};
+  const { setUser, authToken } = useAuthContext();
+  const [settings, setSettings] = useState({
+    github: "",
+    about: "",
+    profile_pic: "",
+    cover_pic: "",
+  });
+
+  const handleUploadPic = (e) => {
+    const [uploadedPicture] = e.target.files;
+    setSettings((prev) => ({ ...prev, [e.target.name]: uploadedPicture }));
+  };
+
+  const handleChange = (e) => {
+    setSettings((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const submitProfileUpdate = async () => {
+    const formData = handleFormData(settings);
+
+    try {
+      const { data } = axios.patch("http://localhost:3001/users/me", formData, {
+        headers: { authorization: `Bearer ${authToken}` },
+      });
+      console.log(data);
+      setUser(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <div className="lg:mx-60 md:mx-30 sm:mx-10 mt-10">
@@ -12,7 +45,7 @@ const ProfileSettings = () => {
                 <div className="grid grid-cols-3 gap-6">
                   <div className="col-span-3 sm:col-span-2">
                     <label
-                      htmlFor="github profile"
+                      htmlFor="github"
                       className="block text-sm font-medium text-gray-700"
                     >
                       Github Profile
@@ -22,11 +55,13 @@ const ProfileSettings = () => {
                         http://
                       </span>
                       <input
+                        onChange={handleChange}
                         type="text"
-                        name="company-website"
-                        id="company-website"
-                        className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                        name="github"
+                        id="github"
+                        className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-black"
                         placeholder="www.example.com"
+                        value={settings.github}
                       />
                     </div>
                   </div>
@@ -41,12 +76,13 @@ const ProfileSettings = () => {
                   </label>
                   <div className="mt-1">
                     <textarea
+                      onChange={handleChange}
+                      value={settings.about}
                       id="about"
                       name="about"
                       rows={3}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                       placeholder="you@example.com"
-                      defaultValue={""}
                     />
                   </div>
                   <p className="mt-2 text-sm text-gray-500">
@@ -72,6 +108,15 @@ const ProfileSettings = () => {
                       type="button"
                       className="ml-5 rounded-md border border-gray-300 bg-white py-2 px-3 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
+                      {" "}
+                      <input
+                        required
+                        name="profile_pic"
+                        type="file"
+                        id="file"
+                        style={{ display: "none" }}
+                        onChange={handleChange}
+                      />
                       Change
                     </button>
                   </div>
@@ -105,9 +150,10 @@ const ProfileSettings = () => {
                           <span>Upload a file</span>
                           <input
                             id="file-upload"
-                            name="file-upload"
+                            name="cover_pic"
                             type="file"
                             className="sr-only"
+                            onChange={handleUploadPic}
                           />
                         </label>
                         <p className="pl-1">or drag and drop</p>
@@ -121,6 +167,7 @@ const ProfileSettings = () => {
               </div>
               <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
                 <button
+                  onClick={submitProfileUpdate}
                   type="submit"
                   className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >

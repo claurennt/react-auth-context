@@ -8,7 +8,7 @@ const register = async (userData) => {
     data: {
       userRegistrationData: [user],
     },
-  } = await axios.post(`${REACT_APP_PROD_API_URL}/users/register`, userData);
+  } = await axios.post(`http://localhost:3001/users/register`, userData);
 
   return { headers, user };
 };
