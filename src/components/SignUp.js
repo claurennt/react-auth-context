@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { register, saveToLocalStorage } from "../utils/auth";
-import validateForm from "../utils/validateForm";
+import { handleFormData, validateForm } from "../utils/form";
 import { useAuthContext } from "../context/AuthContext";
 import Alert from "./Alert";
 
@@ -14,16 +14,13 @@ const SignUp = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    const isValid = validateForm(...Object.values(user));
-    if (!isValid) return;
-
-    const formData = new FormData();
-
-    //loops over user object and fill formData object for multipart/form-data
-    for (const key in user) formData.append(key, user[key]);
-
+    // console.log(...Object.values(user));
+    // const isValid = validateForm(...Object.values(user));
+    // if (!isValid) return;
     try {
+      const formData = handleFormData(user);
+      //console log each form data
+
       const { headers, user: registeredUser } = await register(formData);
 
       const token = headers["x-authorization-token"];
@@ -35,7 +32,15 @@ const SignUp = () => {
       navigate("/", { replace: true });
     } catch (err) {
       console.log(err);
-      setUser({ username: "", password: "", email: "" });
+      setUser({
+        username: "",
+        password: "",
+        email: "",
+        about: "",
+        github: "",
+        profile_pic: null,
+        cover_pic: null,
+      });
       setIsError(true);
       setAuthToken(null);
     }
@@ -46,13 +51,19 @@ const SignUp = () => {
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
+  //update photos propery on the user state to only save the type of picture that was updated
   const handleUploadPic = (e) => {
     const [uploadedPicture] = e.target.files;
-    setUser((prev) => ({ ...prev, [e.target.name]: uploadedPicture }));
+    console.log(uploadedPicture);
+    setUser((prev) => ({
+      ...prev,
+      [e.target.name]: uploadedPicture,
+    }));
   };
 
   //creates pic preview when a pic is selected
-  const picPreview = user?.profile_pic && URL.createObjectURL(user.profile_pic);
+  const picPreview =
+    user?.profile_pic && URL.createObjectURL(user?.profile_pic);
 
   //makes the alert disappear after 3 seconds
   useEffect(() => {
@@ -77,7 +88,7 @@ const SignUp = () => {
                     !user.profile_pic && "opacity-60"
                   }  rounded-full  flex justify-center items-center  transition duration-500`}
                 >
-                  {user.profile_pic && (
+                  {user?.profile_pic && (
                     <img
                       src={picPreview}
                       alt="profile pic"
