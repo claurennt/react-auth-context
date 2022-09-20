@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 const { REACT_APP_DEV_API_URL, REACT_APP_PROD_API_URL } = process.env;
 
@@ -15,7 +15,7 @@ const register = async (userData) => {
 
 const login = async (userData) => {
   const { headers } = await axios.post(
-    `${REACT_APP_PROD_API_URL}/auth/login`,
+    `http://localhost:3001/auth/login`,
     userData
   );
 
@@ -25,7 +25,7 @@ const login = async (userData) => {
 const getUserContext = async (token) => {
   try {
     const { data } = await axios.get(
-      `${REACT_APP_PROD_API_URL}/users/me`,
+      `http://localhost:3001/users/me`,
 
       { headers: { authorization: `Bearer ${token}` } }
     );
@@ -38,16 +38,16 @@ const getUserContext = async (token) => {
 };
 
 const saveToLocalStorage = (token) => {
-  localStorage.setItem("token", token);
+  localStorage.setItem('token', token);
 };
 
 const getFromLocalStorage = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   return token || null;
 };
 
 const removeFromLocalStorage = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem('token');
 };
 
 export {
